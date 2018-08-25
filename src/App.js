@@ -5,7 +5,7 @@ import SearchBar from './components/SearchBar'
 import VideoList from './components/VideoList'
 import VideoDetail from './components/VideoDetails'
 import {API_KEY} from './components/constants'
-
+import _ from 'lodash'
 
 
 
@@ -30,10 +30,13 @@ class App extends Component {
   
   render() {
     const {videos} =this.state
+    //called every 300millisecond
+    const videoSearch=_.debounce((term)=>{this.videoSearch(term)},300)
+
     return (
       <div className="container">
         
-        <SearchBar onSearchTermChange={term=>this.videoSearch(term)}/>
+        <SearchBar onSearchTermChange={videoSearch}/>
         <div className="row">
           <VideoDetail video={this.state.selectedVideo}/>
           <VideoList  videos={videos} onVideoSelect={selectedVideo=>this.setState({selectedVideo})}/>
