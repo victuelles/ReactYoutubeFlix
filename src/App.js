@@ -3,6 +3,7 @@ import './App.css';
 import YTSearch from 'youtube-api-search'
 import SearchBar from './components/SearchBar'
 import VideoList from './components/VideoList'
+import VideoDetail from './components/VideoDetails'
 import {API_KEY} from './components/constants'
 
 
@@ -12,23 +13,31 @@ class App extends Component {
   constructor(props){
     super(props)
 
-    this.state={ videos:[]}
+    this.state={ videos:[],
+                selectedVideo:null}
 
-    YTSearch({key:API_KEY,term:'surfboards'},(videos)=>{
-          console.log('videos',videos)
-          this.setState({videos})
-    })
+    this.videoSearch('surfboards')
+
+   }
+
+   videoSearch(term){
+
+    YTSearch({key:API_KEY,term:term},(videos)=>{
+      console.log('videos',videos)
+      this.setState({videos,selectedVideo:videos[0]})
+})
    }
   
   render() {
     const {videos} =this.state
     return (
-      <div className="App">
+      <div className="container">
         
-        <SearchBar/>
-      
-        <VideoList  videos={videos}/>
-   
+        <SearchBar onSearchTermChange={term=>this.videoSearch(term)}/>
+        <div className="row">
+          <VideoDetail video={this.state.selectedVideo}/>
+          <VideoList  videos={videos} onVideoSelect={selectedVideo=>this.setState({selectedVideo})}/>
+        </div>
       </div>
     );
   }
